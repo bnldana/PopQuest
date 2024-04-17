@@ -1,0 +1,96 @@
+@import url("style.css");
+#colorOverlay2 {
+    display: none;
+    width: 100vw;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+.popup {
+    display: none;
+    position: absolute;
+    z-index: 9999;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 50%;
+    max-width: 600px;
+    min-width: 300px;
+    height: auto;
+    padding: 40px 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    background-color: var(--pop-white);
+    font-family: "Inter";
+}
+span.close {
+    position: absolute;
+    top: 1%;
+    right: 3%;
+    font-size: 40px;
+}
+span.close:hover,
+#gotoLogin:hover,
+#gotoRegister:hover,
+input[type="submit"]:hover {
+    cursor: pointer;
+}
+.popup-content h1 {
+    font-family: "Benz Grotesk";
+    text-align: center;
+    font-size: 2.5em;
+}
+.popup-content {
+    color: var(--pop-dark-red);
+}
+.popup label {
+    font-weight: 600;
+}
+form {
+    display: flex;
+    flex-direction: column;
+    padding: 0 20px;
+}
+form input {
+    border: none;
+    height: 40px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    color: var(--pop-dark-red);
+    background-color: white;
+    padding: 10px;
+}
+#acceptTermsSignup {
+    height: auto;
+}
+#registerForm > div.terms > label > a {
+    text-decoration: underline;
+}
+input[type="submit"] {
+    color: white;
+    font-family: "Benz Grotesk";
+    font-size: 24px;
+    padding: 10px;
+    height: auto;
+    border-radius: 15px;
+    background-color: var(--pop-red);
+    border: 5px solid var(--pop-dark-red);
+    box-shadow: 0 4px 0 var(--pop-dark-red);
+}
+input[type="submit"]:hover {
+    transition: all ease-in 0.1s;
+    transform: translateY(4px);
+    box-shadow: 0 0 0px var(--pop-dark-red);
+}
+#gotoLogin,
+#gotoRegister {
+    margin: 0;
+    text-decoration: underline;
+}
+form + p {
+    padding: 0 20px;
+    margin: 0;
+}

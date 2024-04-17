@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'style.css';
+@import 'forms.css';
+@import 'mobile.css';
+@import 'quiz.css';
+@import 'single.css';
