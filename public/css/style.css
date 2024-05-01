@@ -1,7 +1,7 @@
 @font-face {
     font-family: 'Benz Grotesk';
-    src: url('../assets/fonts/BenzGrotesk-Heavy.woff2') format('woff2'),
-        url('BenzGrotesk-Heavy.woff') format('woff');
+    src: url('../fonts/BenzGrotesk-Heavy.woff2') format('woff2'),
+        url('../fonts/BenzGrotesk-Heavy.woff') format('woff');
     font-weight: 900;
     font-style: normal;
     font-display: swap;
@@ -9,8 +9,8 @@
 
 @font-face {
     font-family: 'Inter';
-    src: url('../assets/fonts/Inter-Regular.woff2') format('woff2'),
-        url('../assets/fonts/Inter-Regular.woff') format('woff');
+    src: url('../fonts/Inter-Regular.woff2') format('woff2'),
+        url('../fonts/Inter-Regular.woff') format('woff');
     font-weight: normal;
     font-style: normal;
     font-display: swap;
@@ -43,25 +43,23 @@ body {
 }
 
 body#home {
-    background-image: url(../assets/images/background.jpg);
+    background-image: url(../images/background.jpg);
     background-size: cover;
     height: 100vh;
+    max-height: 100vh;
+    overflow: hidden;
     position: relative;
 }
 
 header {
-    z-index: 9999;
-    display: flex;
-    position: fixed;
-    justify-content: space-between;
-    width: 100%;
-    top: 0;
-    align-items: center;
-    padding: 20px 40px 0;
     font-family: 'Inter', Helvetica, sans-serif;
     font-weight: bold;
     color: var(--pop-white);
-    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+}
+
+a:hover {
+    text-decoration: none !important;
+    color: inherit !important;
 }
 
 #logoDiv img {
@@ -73,14 +71,16 @@ header {
     transition: all ease-in 0.1s;
 }
 
+.navbar-nav {
+    align-items: center;
+}
+
 .userDiv {
-    position: absolute;
-    right: 2.7%;
-    top: 33%;
+    z-index: 2;
     color: var(--pop-white);
     background-color: var(--pop-red);
     border: 2.5px solid var(--pop-white);
-    padding: 15px 20px;
+    padding: 5px 10px;
     border-radius: 15px;
     line-height: 0.8;
     text-shadow: none;
@@ -98,15 +98,15 @@ header {
     z-index: -9998;
 }
 
-nav {
-    display: flex;
-    justify-content: center;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    position: relative;
-    flex: 1;
-    align-items: center;
+nav, main {
+    width: 950px;
+    max-width: 950px;
+    margin: auto;
+}
+
+div#navHome {
+    width: 50%;
+    margin: auto;
 }
 
 ul#navHome {

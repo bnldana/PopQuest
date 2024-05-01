@@ -18,9 +18,10 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
         'password',
+        'last_completed_level',
     ];
 
     /**
@@ -42,4 +43,43 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function userScores()
+    {
+        return $this->hasMany(UserScore::class);
+    }
+
+    
+    /**
+     * Calculate the global score for the user.
+     */
+    public function globalScore()
+    {
+        return $this->userScores()->sum('score');
+    }
+
+        /**
+     * Get the current level of the user.
+     *
+     * @return int
+     */
+    public function currentLevel()
+    {
+        // Returns the next level they need to start
+        return $this->last_completed_level + 1;
+    }
+
+    /**
+     * Record the completion of a level.
+     *
+     * @param int $level Level number that was completed
+     * @return void
+     */
+    public function completeLevel($level)
+    {
+        if ($level > $this->last_completed_level) {
+            $this->last_completed_level = $level;
+            $this->save();
+        }
+    }
 }

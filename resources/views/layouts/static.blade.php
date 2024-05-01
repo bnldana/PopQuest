@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('body-class', 'static')
+
 @section('content')
 <div id="colorOverlay2"></div>
 <main>

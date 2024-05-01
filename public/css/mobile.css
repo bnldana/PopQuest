@@ -1,0 +1,29 @@
+@media screen and (max-width: 768px) {
+    header {
+        /*position: relative;*/
+    }
+
+    .userDiv {
+        top: 0;
+        /*position: relative;*/
+    }
+
+    .level-card, .level-shadow {
+        height: 10em;
+        width: 10em;
+    }
+
+    #map-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .question-wrapper {
+        width: 90%;
+    }
+
+}
+
+

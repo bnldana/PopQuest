@@ -3,19 +3,18 @@
 @section('body-id', 'home')
 
 @section('content')
-
 <div id="colorOverlay2"></div>
 <div id="colorOverlay"></div>
 
-<nav>
-    <ul id="navDashboard">
+<div id="navHome">
+    <ul id="navHome">
         <li id="playButton">Jouer</li>
         <li><a href="{{ url('/history') }}">Histoire</a></li>
         <li><a href="{{ url('/leaderboard') }}">Classement</a></li>
         <li><a href="{{ url('/faq') }}">F.A.Q</a></li>
         <li><a href="{{ url('/contact') }}">Contact</a></li>
     </ul>
-</nav>
+</div>
 
 <div id="randomizer">
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
@@ -23,6 +22,20 @@
     </svg>
 </div>
 
-{{-- @include('includes.forms') --}}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const isAuthenticated = @json(auth()->check());
+
+    const playButton = document.getElementById('playButton');
+    playButton.addEventListener('click', function() {
+        if (isAuthenticated) {
+            window.location.href = '{{ route('levels.index') }}';
+        } else {
+            $('#registerModal').modal('show');
+        }
+    });
+});
+</script>
+
 
 @endsection

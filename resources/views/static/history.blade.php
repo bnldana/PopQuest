@@ -1,6 +1,6 @@
 @extends('layouts.static')
 
-@section('title', 'History')
+@section('title', 'history')
 
 @section('pageContent')
 <h1>LA QUÊTE DU POPCORN</h1>

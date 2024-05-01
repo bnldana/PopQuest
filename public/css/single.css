@@ -1,6 +1,6 @@
 @import url('style.css');
 
-main {
+main.static {
     position: relative;
     width: 850px;
     margin: auto;
@@ -38,8 +38,8 @@ h1 {
     font-family: 'Benz Grotesk';
     text-align: center;
     color: var(--pop-red);
-    font-size: 3.5em;
-    margin-top: 0;
+    font-size: 3.5em !important;
+    margin-top: 0 !important;
     line-height: 0.9;
     text-transform: uppercase;
 }
