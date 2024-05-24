@@ -50,8 +50,10 @@ Route::get('/game/level/{level}/question/{question}', [GameController::class, 'f
 
 Route::post('/levels/{levelId}/questions/{questionId}/verify', [LevelController::class, 'verifyAnswer'])->name('questions.verify');
 
+Route::post('/level/{level_id}/score', [ScoreController::class, 'store'])->middleware('auth');
+
 Route::fallback(function () {
-    return redirect()->route('welcome');
+    return redirect()->route('/');
 });
 
 require __DIR__ . '/auth.php';

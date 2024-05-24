@@ -1,161 +1,101 @@
 $(document).ready(function() {
-    // Initialization
-    let levelId = new URLSearchParams(window.location.search).get('level') || 1;
+    const gameData = $('#gameData');
+    let questions = JSON.parse(gameData.attr('data-questions'));
+    const levelId = gameData.attr('data-level-id');
+    const csrfToken = gameData.attr('data-csrf-token');
+    const nextLevelUrl = gameData.attr('data-next-level-url');
     let currentQuestionIndex = 0;
     let score = 0;
-    let questions = [];
-    let timerExpired = false;
-    let timer;
+    let startTime, endTime;
 
-    // Variable to hold the start time of the current question
-    let startTime;
+    $('#startLevel').click(function() {
+        $('.level-info').hide();
+        $('.level-content').show();
+        startTime = new Date();
+        displayQuestion(questions[currentQuestionIndex]);
+    });
 
-    // Display level details and load initial data
-    loadInfo(levelId);
-
-    // Load level information and questions
-    function loadInfo(level) {
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            }
-        });
-        $.ajax({
-            url: '/quiz/load-info',
-            type: 'GET',
-            data: { level: level },
-            success: function(response) {
-                displayLevelDetails(response.levelDetails);
-                questions = shuffleArray(response.questions);
-                startLevel();
-            },
-            error: function(error) {
-                console.error('Error loading level info:', error);
-            }
-        });
-    }
-
-    // Display level details
-    function displayLevelDetails(details) {
-        $('#level-name').text(details.name);
-        $('#level-explanation').text(details.explanation);
-    }
-
-    // Start the quiz level based on level type
-    function startLevel() {
-        switch (parseInt(levelId)) {
-            case 2:
-                startDevineFilmGame();
-                break;
-            case 3:
-            case 7:
-                startMatchingGame();
-                break;
-            case 5:
-                startWordleGame();
-                break;
-            default:
-                displayQuestion();
-                break;
+    function displayQuestion(question) {
+        endTime = new Date();
+        if (currentQuestionIndex > 0) {
+            let elapsedTime = endTime - startTime;
+            score += calculatePoints(elapsedTime);
         }
-    }
-
-    // Display the current question
-    function displayQuestion() {
-        if (currentQuestionIndex < questions.length) {
-            let question = questions[currentQuestionIndex];
-            $('#question').text(question.question);
-            let optionsHtml = question.options.map(function(option, index) {
-                return `<li id="option-${index}" class="option" data-isCorrect="${option.isCorrect}">${option.text}</li>`;
-            }).join('');
-            $('#options').html(optionsHtml);
-            setupOptionListeners();
-            startTimer();
-        } else {
-            endLevel();
-        }
-    }
-
-    // Set up listeners for question options
-    function setupOptionListeners() {
-        $('#options li').on('click', function() {
-            let selectedOption = $(this);
-            handleOptionSelection(selectedOption);
-        });
-    }
-
-    // Handle option selection with visual feedback and score calculation
-    function handleOptionSelection(selectedOption) {
-        let isCorrect = $(selectedOption).data('isCorrect');
-        $('#options li').removeClass('correct incorrect unselected no-hover').off('click');
+        startTime = new Date();
         
-        let elapsedTime = Date.now() - startTime; 
-        let points = isCorrect && !timerExpired ? calculatePoints(elapsedTime) : 10;
-        if (isCorrect) {
-            score += points;
-            $(selectedOption).addClass('correct');
-            $('#options li').not(selectedOption).addClass('unselected');
-            $('#qst-' + (currentQuestionIndex + 1)).addClass('right');
-        } else {
-            $(selectedOption).addClass('incorrect');
-            $('#options li').each(function() {
-                if ($(this).data('isCorrect')) {
-                    $(this).addClass('correct');
-                } else if (!$(this).is(selectedOption)) {
-                    $(this).addClass('unselected');
-                }
-            });
-            $('#qst-' + (currentQuestionIndex + 1)).addClass('wrong');
-        }
-
-        $('.question-container').addClass('no-hover');
-
-        setTimeout(function() {
-            if (currentQuestionIndex < questions.length - 1) {
-                displayQuestion(); // Progress to the next question
-            } else {
-                endLevel(); // End the level if it was the last question
-            }
-        }, 2500);
+        $('#question').text(question.question);
+        let optionsHtml = question.choices.map(choice => `<li>${choice.choice_text}</li>`).join('');
+        $('#options').html(optionsHtml);
+        $('#options li').on('click', function() {
+            let choiceIndex = $('#options li').index(this);
+            validateAnswer(question.id, choiceIndex, question.correct_answer);
+        });
+        updateQuestionCounter(currentQuestionIndex + 1, questions.length);
     }
 
-    // Start a timer for the current question
-    function startTimer() {
-        startTime = Date.now(); // Reset the start time for each new question
-        timerExpired = false;
-        timer = setTimeout(function() {
-            timerExpired = true;
-        }, 12000); // 12 seconds until the timer expires
-    }
-
-    // Calculate points based on correctness and time elapsed
-    function calculatePoints(elapsedTime) {
-        let timeFactor = Math.max(0, 12000 - elapsedTime) / 12000; // Decrease points over time
-        return isCorrect ? Math.round(10 * timeFactor) : 0;
-    }
-
-    // End the level and send the score to the server
-    function endLevel() {
-        $.ajax({
-            url: '/quiz/update-progress',
-            type: 'POST',
-            data: { level: levelId, score: score },
-            success: function(response) {
-                alert('Level completed! ' + response.message);
-                window.location.href = '/next-level'; // Redirect to the next level
+    function validateAnswer(questionId, choiceIndex, correctAnswer) {
+        let selectedOption = questions[currentQuestionIndex].choices[choiceIndex].choice_text;
+        fetch(`/levels/${levelId}/questions/${questionId}/verify`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
             },
-            error: function(error) {
-                console.error('Error sending score:', error);
-            }
+            body: JSON.stringify({ selectedOption })
+        })
+        .then(response => response.json())
+        .then(data => {
+            processResponse(data.correct, choiceIndex, correctAnswer);
         });
     }
 
-    // Shuffle array utility function
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // Swap elements
-        }
-        return array;
+    function processResponse(isCorrect, choiceIndex, correctAnswer) {
+        $('#options li').each(function(index) {
+            $(this).removeClass('correct incorrect unselected')
+                .addClass($(this).text() === correctAnswer ? 'correct' : 'unselected');
+        });
+
+        let selectedLi = $('#options li').eq(choiceIndex);
+        selectedLi.removeClass('unselected').addClass(isCorrect ? 'correct' : 'incorrect');
+        $('#qst-' + (currentQuestionIndex + 1)).addClass(isCorrect ? 'right' : 'wrong');
+
+        setTimeout(() => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                displayQuestion(questions[currentQuestionIndex]);
+            } else {
+                endLevel();
+            }
+        }, 1500);
+    }
+
+    function updateQuestionCounter(current, total) {
+        $('.counter p').text(current + '/' + total);
+    }
+
+    function calculatePoints(elapsedTime) {
+        return Math.max(10, 50 - Math.floor(elapsedTime / 1000 / 12 * 40));
+    }
+
+    function endLevel() {
+        endTime = new Date();
+        let elapsedTime = endTime - startTime;
+        score += calculatePoints(elapsedTime);
+
+        fetch(`/level/${levelId}/score`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': csrfToken
+            },
+            body: JSON.stringify({ score })
+        })
+        .then(response => response.json())
+        .then(data => {
+            $('.question-container').html(`
+                <h3>Félicitations, tu as terminé ce niveau avec un score de ${score} points!</h3>
+                <button class="default"><a href="${nextLevelUrl}">Passer au niveau suivant</a></button>`);
+        })
+        .catch(error => console.error('Error:', error));
     }
 });

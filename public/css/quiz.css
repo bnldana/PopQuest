@@ -103,6 +103,7 @@ body#level #logoDiv {
 }
 
 .level-info {
+    transform: rotate(0.5deg);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -111,6 +112,7 @@ body#level #logoDiv {
 }
 
 .level-content {
+    transform: rotate(0.5deg);
     width: 100% !important;
     display: flex;
     flex-direction: column;
@@ -122,6 +124,7 @@ body#level #logoDiv {
 }
 
 .question-container {
+    transform: rotate(-0.5deg);
     height: 700px;
     margin: auto;
     background-color: var(--pop-white);
@@ -162,7 +165,7 @@ body#level #logoDiv {
     text-transform: uppercase;
     font-family: 'Benz Grotesk';
     font-size: 1.3em;
-    background-color: var(--pop-red);
+    background: linear-gradient(135deg, #DA4167, #BB254B); 
     border-radius: 10px;
     width: fit-content;
     padding: 5px 15px;
@@ -224,41 +227,39 @@ body#level #logoDiv {
     width: 100%;
 }
 
-.question-container ul > li,
-.pair {
+.question-container ul > li {
     font-weight: bold;
     color: var(--pop-blue);
     background-color: white;
-    border: 5px solid var(--pop-blue);
-    box-shadow: 0 4px 0 var(--pop-blue);
-    border-radius: 20px;
+    box-shadow: 0 2px 0 var(--pop-blue);
+    border-radius: 25px;
+    font-weight: bold; 
+    border: 2px solid var(--pop-blue);
+    cursor: pointer;
     margin: 10px;
     font-size: 1.2em;
     text-align: center;
-}
-.question-container ul > li {
+    transition: all 0.1s; 
     padding: 15px 20px;
 }
 .question-container ul > li:hover,
-.question-container ul > li:active,
-.pair:hover,
-.pair:active {
-    transform: translateY(4px);
+.question-container ul > li:active {
+    transform: translateY(2px);
     box-shadow: 0 0px 0 var(--pop-blue);
     cursor: pointer;
 }
 
 .correct {
+    background: linear-gradient(135deg, #7FCD00, #005B09); 
+    border: 2px solid #005B09;
     color: white !important;
-    background-color: #7FCD00 !important;
-    border: 5px solid #005B09 !important;
-    box-shadow: 0 4px 0 #005B09 !important;
+    box-shadow: 0 4px 6px rgba(0, 91, 9, 0.1) !important;
 }
 .incorrect {
-        color: white !important;
-        background-color: var(--pop-red) !important;
-        border: 5px solid var(--pop-dark-red) !important;
-        box-shadow: 0 4px 0 var(--pop-dark-red) !important;
+    background: linear-gradient(135deg, var(--pop-red), var(--pop-dark-red)); 
+    color: white !important;
+    border: 2px solid var(--pop-dark-red);
+    box-shadow: 0 4px 6px rgba(91, 13, 0, 0.1) !important;
 }
 .unselected {
     opacity: 0.6;

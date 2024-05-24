@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
-    function changeBackgroundImage() {
+    /*function changeBackgroundImage() {
         const homeElement = document.querySelector('body#home');
         if (homeElement) {
             const images = [
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
-    changeBackgroundImage();
+    changeBackgroundImage();*/
 
     questions.forEach(function(question) {
         question.addEventListener('click', function() {
@@ -26,4 +26,15 @@ document.addEventListener('DOMContentLoaded', function() {
             this.classList.toggle('up');
         });
     });
+
+    function removeAllClasses() {
+        var element = document.querySelector("#registerModal > div > div > div.modal-body > div > div:nth-child(2)");
+        if (element) {
+            element.className = '';
+        } else {
+            console.log('Element not found');
+        }
+    }
+    
+    removeAllClasses();    
 });

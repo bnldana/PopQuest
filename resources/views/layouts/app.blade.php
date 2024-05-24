@@ -29,30 +29,19 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-                <ul class="navbar-nav text-uppercase">
+                <ul class="navbar-nav text-uppercase" style="gap: 20px">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/levels') }}">Niveaux</a>
+                        <a class="nav-link" href="#leaderboard">Classement</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/leaderboard') }}">Classement</a>
+                        <a class="nav-link" href="#faq">F.A.Q</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/faq') }}">F.A.Q</a>
+                        <a class="nav-link" href="#contact">Contact</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ url('/contact') }}">Contact</a>
+                    <li class="nav-item playDiv">
+                        <a class="nav-link" href="#" data-toggle="modal" data-target="#loginModal" style="color: var(--pop-white) !important;"><i class="fa-solid fa-gamepad"></i> JOUER !</a>
                     </li>
-                    @if(auth()->check())
-                        <li class="nav-item userDiv">
-                            <a class="nav-link" href="{{ url('/profile') }}">
-                                <i class="fas fa-user"></i> {{ auth()->user()->username }}
-                            </a>
-                        </li>
-                    @else
-                        <li class="nav-item">
-                            <a class="nav-link" href="#" data-toggle="modal" data-target="#loginModal">Connexion</a>
-                        </li>
-                    @endif
                 </ul>
             </div>
         </nav>
