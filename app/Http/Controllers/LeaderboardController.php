@@ -3,20 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-
 use Illuminate\Support\Facades\DB;
 
 class LeaderboardController extends Controller
 {
-    public function index()
+    public function getTopFiveLeaderboardData()
     {
-        $results = DB::table('global_scores')
-            ->join('users', 'global_scores.user_id', '=', 'users.id')
-            ->select('users.username', 'global_scores.global_score')
-            ->orderByDesc('global_scores.global_score')
-            ->limit(5)
+        return DB::table('global_scores')
+            ->select('global_scores.pseudo', 'global_scores.total_score')
+            ->orderBy('global_scores.total_score', 'desc')
+            ->take(5)
             ->get();
-
+    }
+    
+    public function getAllLeaderboardData()
+    {
+        return DB::table('global_scores')
+            ->select('global_scores.pseudo', 'global_scores.total_score')
+            ->orderBy('global_scores.total_score', 'desc')
+            ->get();
+    }
+    
+    public function showHomePage()
+    {
+        $results = $this->getTopFiveLeaderboardData();
+        return view('welcome', ['results' => $results]);
+    }
+    
+    public function showLeaderboardPage()
+    {
+        $results = $this->getAllLeaderboardData();
         return view('static.leaderboard', ['results' => $results]);
     }
 }

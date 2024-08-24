@@ -1,41 +1,35 @@
-{{-- resources/views/levels/index.blade.php --}}
-
 @extends('layouts.app')
 
 @section('content')
 
-<div id="map-container">
-    @if($levels->count() > 0)
-        @foreach($levels as $level)
-            @php
-                $levelUnlocked = $level->id <= auth()->user()->currentLevel();
-                $levelClass = $levelUnlocked ? 'unlocked' : 'locked';
+@if(isset($error))
+    <p>{{ $error }}</p>
+@else
+    <div id="map-container">
+        @if($levels->count() > 0)
+            @foreach($levels as $index => $level)
+                @php
+                    $scoreValue = $userScores[$level->id] ?? null;
+                    $delay = $index * 100; 
+                    $animationDirection = ($index % 2 === 0) ? 'flip-up' : 'flip-down';
+                @endphp
 
-                $score = $levelUnlocked ? \App\Models\Score::where('user_id', auth()->id())->where('level_id', $level->id)->first() : null;
-                $scoreValue = $score ? $score->score : null;
-            @endphp
-
-            @if($levelUnlocked)
-                <a href="{{ route('levels.show', $level) }}" class="level-link">
-            @endif
-
-            <div class="level-container {{ $levelClass }}">
-                <div class="level-card">
-                    <h3>{{ $level->id }}</h3>
-                    @if($scoreValue !== null)
-                        <p>Score: {{ $scoreValue }}</p>
-                    @endif
-                </div>
-                <div class="level-shadow"></div>
-            </div>
-
-            @if($levelUnlocked)
+                <a href="{{ route('levels.show', $level->id) }}" class="level-link">
+                    <div class="level-container" data-aos="{{ $animationDirection }}" data-aos-delay="{{ $delay }}">
+                        <div class="level-card">
+                            <h3>{{ $level->id }}</h3>
+                            @if($scoreValue !== null)
+                                <p>Score: {{ $scoreValue }}</p>
+                            @endif
+                        </div>
+                        <div class="level-shadow"></div>
+                    </div>
                 </a>
-            @endif
-        @endforeach
-    @else
-        <p>Aucun niveau trouvé.</p>
-    @endif
-</div>
+            @endforeach
+        @else
+            <p>Aucun niveau trouvé.</p>
+        @endif
+    </div>
+@endif
 
 @endsection

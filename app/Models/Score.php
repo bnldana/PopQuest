@@ -8,23 +8,29 @@ class Score extends Model
 {
     protected $table = 'level_scores';
 
-    protected $fillable = ['user_id', 'level_id', 'score'];
+    protected $fillable = ['pseudo', 'level', 'score'];
 
-    public function user()
+    /**
+     * Define the relationship with the User model.
+     */
+    public function player()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Player::class, 'pseudo', 'pseudo');
     }
 
+    /**
+     * Define the relationship with the Level model.
+     */
     public function level()
     {
-        return $this->belongsTo(Level::class);
+        return $this->belongsTo(Level::class, 'level', 'id');
     }
 
     /**
      * Get the total score for a specific user.
      */
-    public static function getGlobalScore($userId)
+    public static function getGlobalScore($pseudo)
     {
-        return self::where('user_id', $userId)->sum('score');
+        return self::where('pseudo', $pseudo)->sum('score');
     }
 }

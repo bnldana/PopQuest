@@ -7,15 +7,20 @@ use Illuminate\Support\Facades\Cookie;
 
 class PlayerController extends Controller
 {
+    /**
+     * Handle the "play" action.
+     *
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function play()
     {
         // Vérifie si le cookie 'username' existe
         if (Cookie::has('username')) {
-            // Redirige le joueur directement vers la page des niveaux
+            // Redirige directement vers la page des niveaux si le cookie existe
             return redirect()->route('levels.index');
         }
 
-        // Sinon, redirige vers la page pour entrer le pseudo (login)
+        // Sinon, redirige vers la page pour entrer le pseudo
         return redirect()->route('pseudo.form');
     }
 

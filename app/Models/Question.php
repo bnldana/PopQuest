@@ -14,6 +14,8 @@ class Question extends Model
         return $this->belongsTo(Level::class);
     }
 
+    public $timestamps = false;
+
     protected $appends = ['choices'];
 
     public function getChoicesAttribute()
@@ -23,12 +25,13 @@ class Question extends Model
             $this->option_b,
             $this->option_c,
             $this->option_d,
-        ])->toArray();
-    
-        $shuffledOptions = Arr::shuffle($options);
-    
-        return collect($shuffledOptions)->map(function ($option, $index) {
+        ]);
+
+        $shuffledOptions = $options->shuffle();
+
+        return $shuffledOptions->map(function ($option) {
             return ['choice_text' => $option];
-        });
-    }    
+        })->values();
+    }
 }
+

@@ -1,59 +1,41 @@
 <?php
 
-use App\Http\Controllers\LeaderboardController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\LevelController;
+use App\Http\Controllers\ApiController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\LeaderboardController;
+use App\Http\Controllers\PlayerController;
 use App\Http\Controllers\StaticController;
-use App\Http\Controllers\UserController;
+use App\Http\Controllers\ScoreController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
-*/
+Route::get('/', [LeaderboardController::class, 'showHomePage'])->name('home');
+Route::get('/leaderboard', [LeaderboardController::class, 'showLeaderboardPage'])->name('leaderboard');
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/play', [PlayerController::class, 'play'])->name('play');
+Route::get('/enter-pseudo', [PlayerController::class, 'showPseudoForm'])->name('pseudo.form');
+Route::post('/enter-pseudo', [PlayerController::class, 'storePseudo'])->name('pseudo.store');
 
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
-
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
-
-Route::get('/history', [StaticController::class, 'history'])->name('history');
-Route::get('/leaderboard', [StaticController::class, 'leaderboard'])->name('leaderboard');
-Route::get('/faq', [StaticController::class, 'faq'])->name('faq');
-Route::get('/contact', [StaticController::class, 'contact'])->name('contact');
 Route::get('/cookies', [StaticController::class, 'cookies'])->name('cookies');
 Route::get('/privacy', [StaticController::class, 'privacy'])->name('privacy');
 Route::get('/legal', [StaticController::class, 'legal'])->name('legal');
 Route::get('/terms', [StaticController::class, 'terms'])->name('terms');
 
-
-Route::get('/levels', [LevelController::class, 'index'])->name('levels.index');
-Route::get('/levels/{level}', [LevelController::class, 'show'])->name('levels.show');
-
+Route::get('/levels', [GameController::class, 'index'])->name('levels.index');
+Route::get('/levels/{level}', [GameController::class, 'showLevel'])->name('levels.show');
 Route::get('/game/level/{level}/question/{question}', [GameController::class, 'fetchQuestion'])->name('game.fetchQuestion');
+Route::post('/levels/{level}/questions/{question}/verify', [GameController::class, 'verifyAnswer'])->name('questions.verify');
 
-Route::post('/levels/{levelId}/questions/{questionId}/verify', [LevelController::class, 'verifyAnswer'])->name('questions.verify');
+Route::get('/api/get_emoji_data', [GameController::class, 'getEmojiData'])->name('emoji.data');
+Route::post('/api/tmdb', [ApiController::class, 'searchMovie'])->name('tmdb.api');
+Route::post('/levels/2/check-answer', [GameController::class, 'checkLevel2Answer'])->name('level2.check');
 
-Route::post('/level/{level_id}/score', [ScoreController::class, 'store'])->middleware('auth');
+Route::post('/scores/{level}', [ScoreController::class, 'store'])->name('scores.store');
 
 Route::fallback(function () {
-    return redirect()->route('/');
+    return response()->view('errors.404', [], 404);
 });
 
-require __DIR__ . '/auth.php';
+Route::group(['prefix' => 'admin'], function () {
+    Voyager::routes();
+});

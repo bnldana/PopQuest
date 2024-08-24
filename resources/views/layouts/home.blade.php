@@ -20,34 +20,35 @@
 </head>
 
 <body id="@yield('body-id', 'default-id')" class="@yield('body-class', 'default-class')">
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-transparent">
-        <div>
-            <a class="navbar-brand d-flex flex-row align-items-center" id="logoDiv" href="{{ url('/') }}">
-                <img src="{{ asset('/images/logo.svg') }}" alt="Logo">
-            </a>
-        </div>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav text-uppercase" style="gap: 20px">
-                <li class="nav-item">
-                    <a class="nav-link" href="/leaderboard">Classement</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/levels">Niveaux</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#contact">Contact</a>
-                </li>
-                <li class="nav-item playDiv">
-                    <a class="nav-link" href="#" id="playButton" style="color: var(--pop-white) !important;"><i class="fa-solid fa-gamepad"></i> JOUER !</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-</header>
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-transparent">
+            <div>
+                <a class="navbar-brand d-flex flex-row align-items-center" id="logoDiv" href="{{ url('/') }}">
+                    <img src="{{ asset('/images/logo.svg') }}" alt="Logo">
+                </a>
+            </div>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav text-uppercase" style="gap: 20px">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#leaderboard">Classement</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#faq">F.A.Q</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">Contact</a>
+                    </li>
+                    <li class="nav-item playDiv">
+                        <a class="nav-link" href="#" id="playButton" style="color: var(--pop-white) !important;"><i class="fa-solid fa-gamepad"></i> JOUER !</a>
+                    </li>
+                                    <!-- Language Switcher -->
+                </ul>
+            </div>
+        </nav>
+    </header>
 
     <main>
         @yield('content')
@@ -95,6 +96,7 @@ $(document).ready(function() {
     $('#playButton').on('click', function(event) {
         event.preventDefault();
         const pseudo = getCookie('pseudo');
+        console.log('Pseudo récupéré du cookie:', pseudo); // Log pour déboguer
         if (pseudo) {
             window.location.href = '{{ route("levels.index") }}';
         } else {
@@ -106,7 +108,9 @@ $(document).ready(function() {
         event.preventDefault();
         let pseudo = $('#pseudo').val();
         if (pseudo) {
+            console.log('Pseudo soumis:', pseudo); // Log pour déboguer
             document.cookie = `pseudo=${pseudo}; path=/; max-age=31536000; SameSite=Lax`;
+            console.log('Cookie défini:', document.cookie); // Log pour déboguer
             window.location.href = '{{ route("levels.index") }}';
         }
     });

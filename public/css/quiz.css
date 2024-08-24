@@ -13,26 +13,14 @@
     width: fit-content;
 }
 
-.unlocked {
-    opacity: 1;
-}
-
-.level-container.unlocked > .level-card:hover {
+.level-container > .level-card:hover {
     transform: rotate(-2deg);
     transition: all ease-in 0.1s;
 }
 
-.level-container.unlocked > .level-card:hover + .level-shadow {
+.level-container > .level-card:hover + .level-shadow {
     transform: rotate(-5deg);
     transition: all ease-in 0.1s;
-}
-
-.locked {
-    opacity: 0.7;
-}
-
-.locked:hover .level-card h3 {
-    color: var(--pop-blue);
 }
 
 .level-container {
@@ -250,16 +238,18 @@ body#level #logoDiv {
 }
 
 .correct {
-    background: linear-gradient(135deg, #7FCD00, #005B09); 
-    border: 2px solid #005B09;
+    background: linear-gradient(135deg, #7FCD00, #5b9300); 
+    border: none !important;
+    font-weight: bold !important;
     color: white !important;
-    box-shadow: 0 4px 6px rgba(0, 91, 9, 0.1) !important;
+    box-shadow: none !important;
 }
 .incorrect {
-    background: linear-gradient(135deg, var(--pop-red), var(--pop-dark-red)); 
+    background: linear-gradient(135deg, #DA4167, #a92b4b); 
     color: white !important;
-    border: 2px solid var(--pop-dark-red);
-    box-shadow: 0 4px 6px rgba(91, 13, 0, 0.1) !important;
+    font-weight: bold !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 .unselected {
     opacity: 0.6;
