@@ -511,6 +511,10 @@ h1::after {
     gap: 20px;
 }
 
+#pseudoModal {
+    z-index: 99999 !important;
+}
+
 .modal-content {
     background-color: var(--pop-blue) !important;
     color: var(--pop-white) !important;

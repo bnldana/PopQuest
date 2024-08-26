@@ -1,9 +1,9 @@
 @extends('layouts.static')
 
-@section('title', 'cookies')
+@section('title', 'leaderboard')
 
 @section('pageContent')
-<h1 class="mb-4">Le classement</h1>
+<h1 class="mb-4">{{ __('messages.Le classement') }}</h1>
 <div class="leaderboard-list mb-4">
         <ul>
             @foreach ($results as $index => $row)

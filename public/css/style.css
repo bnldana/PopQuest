@@ -59,8 +59,11 @@ html {
 }
 
 body {
+    overflow-x: hidden;
     user-select: none;
     box-sizing: border-box;
+    background-image: url('/images/bg.png');
+    background-size: contain;
     background-color: var(--pop-blue);
     display: flex;
     flex-direction: column;
@@ -72,6 +75,12 @@ body {
 
 body#home p {
     color: var(--pop-white) !important;
+}
+
+body#home .flex-wrapper {
+    gap: 200px;
+    display: flex;
+    flex-direction: column;
 }
 
 header {
@@ -177,10 +186,18 @@ a {
 
 footer {
     text-align: center;
-    font-family: 'Trap';
+    font-family: 'Inter';
     color: var(--pop-white);
     text-shadow: 0 4px 10px rgba (0, 0, 0, 0.4);
     margin: auto;
+}
+
+footer a {
+    font-weight: normal;
+}
+
+footer a:hover {
+    font-weight: bold;
 }
 
 .image-container {
@@ -188,14 +205,14 @@ footer {
 }
 
 .bg-image {
-    background-image: url(../images/background.jpg);
+    background-image: url(../images/popquestillu.png);
     background-size: cover;
     background-position: 90% center;
     position: relative;
     height: 100%;
     z-index: -1;
 }
-
+/**
 .gradient-overlay {
     position: absolute;
     top: 0;
@@ -206,7 +223,7 @@ footer {
                 linear-gradient(90deg, var(--pop-blue) 0%, rgba(16, 16, 16, 0) 20%, var(--pop-blue) 100%), 
                 linear-gradient(180deg, var(--pop-blue) 0%, rgba(16, 16, 16, 0) 20%, var(--pop-blue) 100%);
 }
-
+**/
 #home label {
     color: var(--pop-white);
 }
@@ -599,4 +616,45 @@ body.static .leaderboard-list {
 #pseudoForm .form-group,
 input.form-control {
     margin-bottom: 0 !important;
+}
+
+.faq-item h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.static #playButton {
+    border: 2px solid #ae3452 !important;
+}
+
+@media (max-width: 991.98px) {
+    .navbar.d-none.d-lg-flex {
+        display: none !important;
+    }
+}
+
+@media (min-width: 992px) {
+    .navbar.d-lg-none {
+        display: none !important;
+    }
+}
+
+.bg-warning {
+    background-color: var(--pop-red) !important;
+}
+
+.js-cookie-consent-agree {
+    background-color: var(--pop-dark-red) !important;
+    border: none;
+    color: white !important;
+    padding: 8px 20px !important;
+}
+
+.js-cookie-consent-agree:hover {
+    background-color: #751c32 !important;
+}
+
+.cookie-consent__message {
+    font-size: 1em !important;
 }

@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('body-class', 'levels')
+
 @section('content')
 <div class='question-wrapper'>
     <div class='question-container'>
@@ -7,6 +9,11 @@
             <h1 id='level-name'>{{ $level->name }}</h1>
             <p id='level-explanation'>{{ $level->explanation }}</p>
             <button id='startLevel' class='default'>C'est parti !</button>
+            <div class="navigation-options" id="nav-quiz">
+<a href="{{ app()->getLocale() == 'en' ? '/en/levels' : '/levels' }}" class="map-link">
+<i class="fas fa-home"></i>
+</a>
+</div>
         </div>
         <div class='level-content' style="display:none;">
             <p id='level-title'>{{ $level->name }}</p>
@@ -40,11 +47,19 @@
                     <p id='score-display'></p>
                 @endif
             </div>
+            <div class="navigation-options">
+<a href="{{ app()->getLocale() == 'en' ? '/en/levels' : '/levels' }}" class="map-link">
+<i class="fas fa-home"></i>
+</a>
+<a href="#" class="restart-link" onclick="window.location.reload();">
+<i class="fas fa-redo-alt"></i>
+</a>
+</div>
         </div>
     </div>
 </div>
 
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 <script>
 $(document).ready(function() {
     console.log("Document ready");
@@ -79,11 +94,16 @@ $(document).ready(function() {
         } else {
             console.log("Loading standard questions");
             questions = @json($level->questions);
-            displayQuestion(questions[currentQuestionIndex]);
+            if (questions.length > 0) {
+                displayQuestion(questions[currentQuestionIndex]);
+            } else {
+                console.error("No questions available for this level.");
+            }
         }
     });
 
     function displayQuestion(question) {
+        console.log("Displaying question:", question);
         endTime = new Date();
         if (currentQuestionIndex > 0) {
             let elapsedTime = endTime - startTime;
@@ -100,31 +120,49 @@ $(document).ready(function() {
 
     function displayStandardQuestion(question) {
         $('#question').text(question.question);
-        let optionsHtml = question.choices.map(choice => `<li>${choice.choice_text}</li>`).join('');
+        let optionsHtml = question.choices.map(choice => `<li style="${choice.choice_text.trim() === '' ? 'display: none;' : ''}">${choice.choice_text}</li>`).join('');
+
         $('#options').html(optionsHtml);
         $('#options li').on('click', function() {
-            let choiceIndex = $('#options li').index(this);
-            validateAnswer(question.id, choiceIndex, question.correct_answer);
+            if($(this).css('display') !== 'none') {
+                let choiceIndex = $('#options li').index(this);
+                validateAnswer(question.id, choiceIndex, question.correct_answer);
+            }
         });
         updateQuestionCounter(currentQuestionIndex + 1, questions.length);
     }
 
     function validateAnswer(questionId, choiceIndex, correctAnswer) {
-        let selectedOption = questions[currentQuestionIndex].choices[choiceIndex].choice_text;
-        fetch(`/levels/{{ $level->id }}/questions/${questionId}/verify`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ selectedOption })
-        })
-        .then(response => response.json())
-        .then(data => {
+    let selectedOption = questions[currentQuestionIndex].choices[choiceIndex].choice_text;
+    console.log("Validating answer:", selectedOption);
+
+    fetch(`/levels/{{ $level->id }}/questions/${questionId}/verify`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ selectedOption })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        console.log("Response from server:", data);
+        if (data && typeof data.correct !== 'undefined') {
             processResponse(data.correct, choiceIndex, correctAnswer);
-        })
-        .catch(error => console.error('Error:', error));
-    }
+        } else {
+            throw new Error('Invalid data format received from server.');
+        }
+    })
+    .catch(error => {
+        console.error('Error validating answer:', error);
+        alert('There was an error processing your request. Please try again.');
+    });
+}
 
     function displayEmojiQuestion(question) {
         $('#emojisQuestion').text(question.question);
@@ -146,6 +184,8 @@ $(document).ready(function() {
     }
 
     function processStandardResponse(isCorrect, choiceIndex, correctAnswer) {
+        console.log("Processing standard response. Is correct?", isCorrect);
+
         $('#options li').each(function() {
             $(this).removeClass('correct incorrect unselected')
                 .addClass($(this).text() === correctAnswer ? 'correct' : 'unselected');
@@ -153,6 +193,12 @@ $(document).ready(function() {
 
         let selectedLi = $('#options li').eq(choiceIndex);
         selectedLi.removeClass('unselected').addClass(isCorrect ? 'correct' : 'incorrect');
+
+        if (isCorrect) {
+            score += calculatePoints(new Date() - startTime);
+        } else {
+            score += 0;
+        }
 
         $('#qst-' + (currentQuestionIndex + 1)).addClass(isCorrect ? 'right' : 'wrong');
 
@@ -170,9 +216,13 @@ $(document).ready(function() {
         if (isCorrect) {
             $('#movie-input').css('border', '2px solid green');
             $('#qst-' + (currentQuestionIndex + 1)).addClass('right');
+            
+            score += calculatePoints(new Date() - startTime);
         } else {
             $('#movie-input').css('border', '2px solid red');
             $('#qst-' + (currentQuestionIndex + 1)).addClass('wrong');
+            
+            score += 0; 
         }
 
         setTimeout(function() {
@@ -197,7 +247,11 @@ $(document).ready(function() {
                     throw new Error('Data is not an array');
                 }
                 questions = data;
-                displayQuestion(questions[currentQuestionIndex]);
+                if (questions.length > 0) {
+                    displayQuestion(questions[currentQuestionIndex]);
+                } else {
+                    console.error("No emoji questions available.");
+                }
             },
             error: function(xhr, status, error) {
                 console.error('There has been a problem with your fetch operation:', error);
@@ -237,7 +291,7 @@ $(document).ready(function() {
                 });
             },
             error: function(xhr, status, error) {
-                console.error('Error:', error);
+                console.error('Error fetching movie suggestions:', error);
             }
         });
     });
@@ -260,7 +314,7 @@ $(document).ready(function() {
                 processEmojiResponse(data.correct);
             },
             error: function(xhr, status, error) {
-                console.error('Error:', error);
+                console.error('Error submitting emoji answer:', error);
             }
         });
     });
@@ -274,16 +328,18 @@ $(document).ready(function() {
     }
 
     function endLevel() {
-        console.log("Fin du niveau atteinte");
+        console.log("End of level reached");
         endTime = new Date();
         let elapsedTime = endTime - startTime;
         score += calculatePoints(elapsedTime);
 
         var levelId = {{ $level->id }};
         var nextLevel = levelId + 1;
+        var previousLevel = levelId - 1;
         var nextLevelUrl = `/levels/${nextLevel}`;
+        var previousLevelUrl = `/levels/${previousLevel}`;
 
-        console.log("Envoi du score:", score);
+        console.log("Sending score:", score);
 
         fetch(`/scores/${levelId}`, { 
             method: 'POST',
@@ -303,12 +359,28 @@ $(document).ready(function() {
             } else {
                 message = `Bravo, tu as terminé ce niveau avec un score de ${score} points !`;
             }
+            
             $('.question-container').html(`
                 <h3>${message}</h3>
-                <button class="default"><a href="${nextLevelUrl}">Passer au niveau ${nextLevel}</a></button>`);
+                <button class="default"><a href="${nextLevelUrl}">Passer au niveau ${nextLevel}</a></button>
+                <div class="navigation-options">
+                    <a href="${previousLevelUrl}" class="previous-link">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    
+                    <a href="{{ app()->getLocale() == 'en' ? '/en/levels' : '/levels' }}" class="map-link">
+                        <i class="fas fa-home"></i>
+                    </a>
+                    
+                    <a href="#" class="retry-link" onclick="window.location.reload();">
+                        <i class="fas fa-redo-alt"></i>
+                    </a>
+                </div>
+            `);
         })
-        .catch(error => console.error('Erreur:', error));
+        .catch(error => console.error('Error sending score:', error));
     }
+
 });
 </script>
 

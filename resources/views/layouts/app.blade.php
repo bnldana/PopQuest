@@ -22,30 +22,50 @@
 <body id="@yield('body-id', 'default-id')" class="@yield('body-class', 'default-class')">
 <header>
     <nav class="navbar navbar-expand-lg navbar-dark bg-transparent">
-        <div>
-            <a class="navbar-brand d-flex flex-row align-items-center" id="logoDiv" href="{{ url('/') }}">
-                <img src="{{ asset('/images/logo.svg') }}" alt="Logo">
-            </a>
-        </div>
+    <div>
+    <a class="navbar-brand d-flex flex-row align-items-center" id="logoDiv" href="{{ app()->getLocale() == 'en' ? url('/en') : url('/') }}">
+        <img src="{{ asset('/images/logo.svg') }}" alt="Logo">
+    </a>
+</div>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
-            <ul class="navbar-nav text-uppercase" style="gap: 20px">
-                <li class="nav-item">
-                    <a class="nav-link" href="/leaderboard">Classement</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/levels">Niveaux</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#contact">Contact</a>
-                </li>
-                <li class="nav-item playDiv">
-                    <a class="nav-link" href="#" id="playButton" style="color: var(--pop-white) !important;"><i class="fa-solid fa-gamepad"></i> JOUER !</a>
-                </li>
-            </ul>
-        </div>
+    <ul class="navbar-nav text-uppercase" style="gap: 20px">
+        <li class="nav-item">
+            <a class="nav-link" href="{{ app()->getLocale() == 'en' ? '/en/leaderboard' : '/leaderboard' }}">
+                {{ __('messages.Classement') }}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ app()->getLocale() == 'en' ? '/en/levels' : '/levels' }}">
+                {{ __('messages.Niveaux') }}
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" href="{{ app()->getLocale() == 'en' ? '/en/contact' : '/contact' }}">{{ __('messages.Contact') }}</a>
+        </li>
+        <li class="nav-item playDiv">
+            <a class="nav-link" href="#" id="playButton" style="color: var(--pop-white) !important;">
+                <i class="fa-solid fa-gamepad"></i> {{ __('messages.JOUER !') }}
+            </a>
+        </li>
+
+        @if (app()->getLocale() === 'fr')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('set-locale', ['locale' => 'en']) }}">
+                <img style="width: 35px !important;" src="{{ asset('/images/raten.png') }}" alt="Rat EN">
+                </a>
+            </li>
+        @elseif (app()->getLocale() === 'en')
+            <li class="nav-item">
+                <a class="nav-link" href="{{ route('set-locale', ['locale' => 'fr']) }}">
+                <img style="width: 35px !important;" src="{{ asset('/images/ratfr.png') }}" alt="Rat FR">
+                </a>
+            </li>
+        @endif
+    </ul>
+</div>
     </nav>
 </header>
 
@@ -129,13 +149,20 @@ console.log('Vérification du cookie pseudo:', pseudo);
 </body>
 
 <footer class="text-center py-3">
-    <div>
-        <p class="mb-1">&copy; 2024 Danowrld</p>
-        <p>
-            <a href="{{ url('/legal') }}">Mentions légales</a> | 
-            <a href="{{ url('/privacy') }}">Confidentialité</a> | 
-            <a href="{{ url('/cookies') }}">Cookies</a>
-        </p>
+    <div class="container-div">
+        <div class="row justify-content-center">
+            <div class="col-auto">
+                <a href="{{ app()->getLocale() == 'en' ? url('/en/legal') : url('/legal') }}">{{ __('messages.Mentions légales') }}</a>
+            </div>
+            <div class="col-auto">
+                <a href="{{ app()->getLocale() == 'en' ? url('/en/privacy') : url('/privacy') }}">{{ __('messages.Confidentialité') }}</a>
+            </div>
+            <div class="col-auto">
+                <a href="{{ app()->getLocale() == 'en' ? url('/en/cookies') : url('/cookies') }}">{{ __('messages.Cookies') }}</a>
+            </div>
+        </div>
     </div>
+    <p class="mb-1">&copy; 2024 Danowrld</p>
 </footer>
+
 </html>

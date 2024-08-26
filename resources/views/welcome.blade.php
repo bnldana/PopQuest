@@ -4,7 +4,7 @@
 
 @section("content")
 <div class="progressBar" style="width: 0%;"></div>
-<div class="my-5 flex-wrapper" style="gap: 200px; display: flex; flex-direction: column;">
+<div class="my-5 flex-wrapper">
     <div id="welcome" class="row align-items-center mb-5" data-aos="fade-up" data-aos-offset="200" data-aos-duration="1000">
         <div class="col-md-5 text-content">
             <h1>{{ __('messages.La quête du popcorn') }}</h1>
@@ -12,11 +12,9 @@
                     <p>{{ __('messages.Bienvenue dans Popcorn Quest, le jeu pour tous les fans de cinéma !') }}</p>
                     <p>{{ __('messages.Teste tes connaissances avec huit mini-quiz sur différents thèmes du ciné. Fais le meilleur score et deviens le roi du grand écran.') }}</p>
                     <p>{{ __('messages.Alors, prêt à relever le défi ?') }}</p>
-                    <p>Locale dans app()->getLocale(): {{ app()->getLocale() }}</p>
-                    <p>Locale dans la session: {{ session('locale') }}</p>
                 </div>
             <div class="button-container mt-3">
-                <button id="playButton" class="default">{{ __("messages.C'est parti !") }}</button>
+                <button id="playButton2" class="default">{{ __("messages.C'est parti !") }}</button>
             </div>
         </div>
         <div class="col-md-7 image-container">
@@ -43,7 +41,9 @@
                 </li>
             @endforeach
         </ul>
-        <a href="/leaderboard" style="text-align: center; color: white;">Voir le classement entier</a>
+        <a href="{{ app()->getLocale() == 'en' ? '/en/leaderboard' : '/leaderboard' }}" style="text-align: center; color: white;">
+    {{ __('messages.Voir le classement entier') }}
+</a>
         <div class="buttons-container">
                 <div class="button-container">
                     <button id="playButton" class="default">{{ __('messages.Fais mieux !') }}</button>
@@ -56,12 +56,12 @@
         <h1 class="mb-4" data-aos="fade-up" data-aos-offset="200" data-aos-duration="1000">{{ __('F.A.Q') }}</h1>
         <div class="row g-4 mb-3">
             <div class="col-md-4 faq-item" data-aos="fade-up" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="100">
-                <h3>{{ __('messages.Dois-je créer un compte pour jouer ?') }}</h3>
+                <h3>{{ __('messages.Faut-il créer un compte pour jouer ?') }}</h3>
                 <p>{{ __("messages.Non, pas besoin. Clique sur Jouer, entre ton pseudo et c'est parti !") }}</p>
             </div>
             <div class="col-md-4 faq-item" data-aos="fade-up" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="200">
-                <h3>{{ __('messages.Puis-je jouer sur mobile ?') }}</h3>
-                <p>{{ __('messages.Oui, le jeu est conçu pour être responsive et accessible sur tous les appareils, y compris les smartphones et les tablettes.') }}</p>
+                <h3>{{ __('messages.Est-ce que je peux jouer sur mobile ?') }}</h3>
+                <p>{{ __('messages.Oui, le jeu est conçu pour être responsive et accessible sur tous les appareils.') }}</p>
             </div>
             <div class="col-md-4 faq-item" data-aos="fade-up" data-aos-offset="200" data-aos-duration="1000" data-aos-delay="300">
                 <h3>{{ __('messages.Que faire si je trouve une question incorrecte ou une autre erreur ?') }}</h3>
@@ -73,8 +73,8 @@
     <div id="contact" class="mb-5" data-aos="fade-up" data-aos-offset="200" data-aos-duration="1000">
         <h1 class="mb-4">{{ __('messages.Contacte-nous') }}</h1>
         <p class="mb-4">{{ __('messages.Tu as des questions ou des commentaires? On t\'écoute !') }}</p>
-        <form action="" method="post">
-            @csrf <!-- CSRF token for security -->
+        <form action="{{ route('contact') }}" method="post">
+        @csrf <!-- CSRF token for security -->
             <div class="mb-3">
                 <label for="name" class="form-label">{{ __('messages.Ton nom') }}</label>
                 <input type="text" id="name" name="name" class="form-control" required>

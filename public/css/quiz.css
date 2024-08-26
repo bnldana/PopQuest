@@ -3,6 +3,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&display=swap');
 
 /*map*/
+body.levels {
+    height: 100dvh;
+}
+
+body.levels header, body.levels footer, body.map footer {
+    display: none;
+}
+
 #map-container {
     display: grid;
     grid-template-columns: 200px 200px 200px 200px; 
@@ -76,18 +84,30 @@
 }
 
 /*quiz*/
-body#map,
-body#level {
-    height: 100vh;
-}
-
-body#level #logoDiv {
-    visibility: hidden;
+.question-wrapper button.default {
+    border: 2px solid #ae3452 !important;
 }
 
 .question-wrapper {
     position: relative;
     margin: auto;
+}
+
+.navigation-options {
+    display: flex;
+    margin-top: 20px;
+    gap: 10px;
+    font-size: 1.5em;
+    color: var(--pop-red);
+    justify-content: center;
+}
+
+.navigation-options#nav-quiz {
+    margin-top: 0 !important;
+}
+
+.navigation-options a:hover {
+    color: var(--pop-dark-red) !important;
 }
 
 .level-info {
@@ -97,6 +117,11 @@ body#level #logoDiv {
     align-items: center;
     justify-content: center;
     gap: 50px;
+}
+
+#level-explanation {
+    font-size: 1.3em !important;
+    text-align: center;
 }
 
 .level-content {
@@ -242,31 +267,31 @@ body#level #logoDiv {
     border: none !important;
     font-weight: bold !important;
     color: white !important;
-    box-shadow: none !important;
+    box-shadow: 0 0 #0000, 0 0 #0000, inset 0 -5px 0 0 rgba(0, 0, 0, 0.2) !important;
 }
 .incorrect {
     background: linear-gradient(135deg, #DA4167, #a92b4b); 
     color: white !important;
     font-weight: bold !important;
     border: none !important;
-    box-shadow: none !important;
+    box-shadow: 0 0 #0000, 0 0 #0000, inset 0 -5px 0 0 rgba(0, 0, 0, 0.2) !important;
 }
 .unselected {
     opacity: 0.6;
 }
 .no-hover .unselected:hover {
     transform: none;
-    box-shadow: 0 4px 0 var(--pop-blue);
+    box-shadow: 0 4px 0 var(--pop-blue) !important;
     cursor: default; 
 }
 .no-hover .correct:hover {
     transform: none;
-    box-shadow: 0 4px 0 #005B09;
+    box-shadow: 0 0 #0000, 0 0 #0000, inset 0 -5px 0 0 rgba(0, 0, 0, 0.2) !important;
     cursor: default; 
 }
 .no-hover .incorrect:hover {
     transform: none;
-    box-shadow: 0 4px 0 var(--pop-dark-red);
+    box-shadow: 0 0 #0000, 0 0 #0000, inset 0 -5px 0 0 rgba(0, 0, 0, 0.2) !important;
     cursor: default; 
 }
 

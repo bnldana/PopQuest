@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('body-class', 'map')
+
 @section('content')
 
 @if(isset($error))
@@ -19,7 +21,7 @@
                         <div class="level-card">
                             <h3>{{ $level->id }}</h3>
                             @if($scoreValue !== null)
-                                <p>Score: {{ $scoreValue }}</p>
+                                <p>{{ $scoreValue }} pts</p>
                             @endif
                         </div>
                         <div class="level-shadow"></div>
