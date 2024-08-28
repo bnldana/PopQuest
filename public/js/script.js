@@ -1,40 +1,21 @@
-document.addEventListener('DOMContentLoaded', function() {
-    /*function changeBackgroundImage() {
-        const homeElement = document.querySelector('body#home');
-        if (homeElement) {
-            const images = [
-                'url("/images/background.jpg")',
-                'url("/images/background1.jpg")',
-                'url("/images/background2.jpg")',
-                'url("/images/background3.jpg")',
-                'url("/images/background4.jpg")',
-                'url("/images/background5.jpg")',
-            ];
-            const randomIndex = Math.floor(Math.random() * images.length);
-            homeElement.style.backgroundImage = images[randomIndex];
-            homeElement.style.backgroundSize = 'cover';
-            homeElement.style.backgroundPosition = 'center';
-        }
-    }
-    
-    changeBackgroundImage();*/
+$(document).ready(function() {
+    const leaderboardItems = document.querySelectorAll(".leaderboard-item");
 
-    questions.forEach(function(question) {
-        question.addEventListener('click', function() {
-            const answer = this.parentElement.nextElementSibling;
-            answer.classList.toggle('visible');
-            this.classList.toggle('up');
-        });
+    leaderboardItems.forEach((item, index) => {
+    setTimeout(() => {
+        item.classList.add("grow");
+    }, index * 150);
     });
-
-    function removeAllClasses() {
-        var element = document.querySelector("#registerModal > div > div > div.modal-body > div > div:nth-child(2)");
-        if (element) {
-            element.className = '';
-        } else {
-            console.log('Element not found');
-        }
-    }
-    
-    removeAllClasses();    
 });
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+    }
+    return null;
+}
+
+const pseudo = getCookie('pseudo');
+console.log('Vérification du cookie pseudo:', pseudo);

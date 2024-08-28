@@ -9,11 +9,12 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
-        Schema::create('players', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+        Schema::create('levels_en', function (Blueprint $table) {
+            $table->integer('level');
+            $table->string('name');
+            $table->text('explanation')->nullable();
         });
     }
 
@@ -22,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('players');
+        Schema::dropIfExists('levels_en');
     }
 };

@@ -97,55 +97,6 @@
         </div>
     </div>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
-    <script>
-$(document).ready(function() {
-    AOS.init();
-
-    const leaderboardItems = document.querySelectorAll(".leaderboard-item");
-
-    leaderboardItems.forEach((item, index) => {
-    setTimeout(() => {
-        item.classList.add("grow");
-    }, index * 150);
-    });
-
-    $('#playButton').on('click', function(event) {
-        event.preventDefault();
-        const pseudo = getCookie('pseudo');
-        if (pseudo) {
-            window.location.href = '{{ route("levels.index") }}';
-        } else {
-            $('#pseudoModal').modal('show');
-        }
-    });
-
-    $('#pseudoForm').on('submit', function(event) {
-        event.preventDefault();
-        let pseudo = $('#pseudo').val();
-        if (pseudo) {
-            document.cookie = `pseudo=${pseudo}; path=/; max-age=31536000; SameSite=Lax`;
-            window.location.href = '{{ route("levels.index") }}';
-        }
-    });
-});
-
-function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {
-        return parts.pop().split(';').shift();
-    }
-    return null;
-}
-
-const pseudo = getCookie('pseudo');
-console.log('Vérification du cookie pseudo:', pseudo);
-
-    </script>
-    <script src="{{ asset('js/script.js') }}"></script>
 </body>
 
 <footer class="text-center py-3">
@@ -164,5 +115,39 @@ console.log('Vérification du cookie pseudo:', pseudo);
     </div>
     <p class="mb-1">&copy; 2024 Danowrld</p>
 </footer>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+    <script>
+$(document).ready(function() {
+    AOS.init();
+
+    $('#playButton').on('click', function(event) {
+    event.preventDefault();
+    const pseudo = getCookie('pseudo');
+    const targetRoute = '{{ app()->getLocale() == "en" ? url("/en/levels") : url("/levels") }}';
+
+    if (pseudo) {
+        window.location.href = targetRoute;
+    } else {
+        $('#pseudoModal').modal('show');
+    }
+});
+
+$('#pseudoForm').on('submit', function(event) {
+    event.preventDefault();
+    let pseudo = $('#pseudo').val();
+    const targetRoute = '{{ app()->getLocale() == "en" ? url("/en/levels") : url("/levels") }}';
+
+    if (pseudo) {
+        document.cookie = `pseudo=${pseudo}; path=/; max-age=31536000; SameSite=Lax`;
+        window.location.href = targetRoute;
+    }
+});
+});
+    </script>
+    <script src="{{ asset('js/script.js') }}"></script>
 
 </html>
