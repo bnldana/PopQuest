@@ -21,6 +21,14 @@ body.levels header, body.levels footer, body.map footer {
     width: fit-content;
 }
 
+.level-card svg {
+    fill: var(--pop-blue) !important;
+}
+
+.level-card svg:hover {
+    fill: var(--pop-red) !important;
+}
+
 .level-container > .level-card:hover {
     transform: rotate(-2deg);
     transition: all ease-in 0.1s;
@@ -80,7 +88,7 @@ body.levels header, body.levels footer, body.map footer {
     border-radius: 20px;
     padding: 5px 10px;
     position: absolute;
-    bottom: 10%;
+    bottom: -5%;
 }
 
 /*quiz*/
@@ -173,8 +181,11 @@ body.levels header, body.levels footer, body.map footer {
     gap: 20px;
 }
 
-#level-title {
-    margin: auto;
+#level-title,
+.leaderboard-navbar li a {
+    margin-right: auto;
+    margin-left: auto;
+    margin-bottom: 30px;
     text-transform: uppercase;
     font-family: 'Benz Grotesk';
     font-size: 1.3em;
@@ -183,6 +194,28 @@ body.levels header, body.levels footer, body.map footer {
     width: fit-content;
     padding: 5px 15px;
     color: white;
+    text-decoration: none;
+}
+
+.leaderboard-navbar li a:not(.active) {
+    opacity: 0.6;
+}
+
+.leaderboard-navbar li a.active,
+.leaderboard-navbar li a:hover {
+    opacity: 1;
+    color: white !important;
+}
+
+.leaderboard-navbar ul {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none !important;
+    padding: 0;
+    margin: 0;
+    gap: 5px;
+    justify-content: center;
+    align-content: center;
 }
 
 .kernels {
@@ -240,7 +273,8 @@ body.levels header, body.levels footer, body.map footer {
     width: 100%;
 }
 
-.question-container ul > li {
+.question-container ul > li,
+.input-wrapper input {
     font-weight: bold;
     color: var(--pop-blue);
     background-color: white;
@@ -255,11 +289,16 @@ body.levels header, body.levels footer, body.map footer {
     transition: all 0.1s; 
     padding: 15px 20px;
 }
+
 .question-container ul > li:hover,
 .question-container ul > li:active {
     transform: translateY(2px);
     box-shadow: 0 0px 0 var(--pop-blue);
     cursor: pointer;
+}
+
+.input-wrapper input {
+    margin: 0!important;
 }
 
 .correct {
@@ -319,7 +358,8 @@ body.levels header, body.levels footer, body.map footer {
 #movie-input {
     height: 100%;
     width: 100%;
-    padding: 10px;
+    position: relative;
+    z-index: 2;
     font-size: 1rem;
     border-radius: 15px;
     box-sizing: border-box;
@@ -337,17 +377,22 @@ body.levels header, body.levels footer, body.map footer {
     top: 100%;
     left: 0;
     right: 0;
-    border: 1px solid #ccc;
+    border: 1px solid var(--pop-blue);
     border-top: none;
-    z-index: 999;
+    z-index: 1;
+    margin-top: -10px;
     background: white;
-    border-radius: 0 15px 15px 0;
+    border-radius: 0 0 15px 15px;
 }
 
 .suggestions-list div {
     padding: 10px;
     cursor: pointer;
     text-align: left;
+}
+
+.movie-suggestion-item:nth-child(1) {
+    margin-top: 10px;
 }
 
 .suggestions-list div:hover {
@@ -361,29 +406,20 @@ body.levels header, body.levels footer, body.map footer {
 }
 
 .movie-suggestion-poster {
-    width: 50px; /* Adjust based on your preference */
+    width: 50px;
     margin-right: 10px;
     border-radius: 4px;
 }
 
 .movie-suggestion-title {
-    font-size: 14px; /* Adjust based on your preference */
+    font-size: 14px;
 }
 
-/* Level 3/7 */
-
-.pairs-columns {
+.random-level {
     display: flex;
-    justify-content: space-around;
-    width: 100%;
-    gap: 200px;
+    justify-content: center;
 }
 
-.pair-container {
-    width: 45%;
-}
-
-.pair {
-    cursor: pointer;
-    padding: 7.5px 20px;
+.playDiv a:hover .playDiv a:hover {
+    color: white !important;
 }

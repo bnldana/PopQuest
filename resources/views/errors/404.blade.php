@@ -2,7 +2,9 @@
 
 @section('body-class', 'static')
 
+@section("body-id", "error")
+
 @section('content')
-<p style="color: white">404 :/</p>
-<p><a style="color: white" href="{{ route('home') }}">Retourner à l'accueil</a></p>
+<h1 style="color: white">Cette page n'existe pas</h1>
+<p><a style="color: white" href="{{ app()->getLocale() == 'en' ? url('/en') : url('/') }}">Retourner à l'accueil</a></p>
 @endsection

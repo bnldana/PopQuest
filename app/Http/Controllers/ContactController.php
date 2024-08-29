@@ -11,22 +11,23 @@ class ContactController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email',
+            'email' => 'required|email|max:255',
             'message' => 'required|string',
         ]);
+
+        $email = 'hello@popcornquest.fun';
 
         $data = [
             'name' => $request->input('name'),
             'email' => $request->input('email'),
-            'user_message' => $request->input('message'),
+            'userMessage' => $request->input('message'),
         ];
-        
-        Mail::send('contact', $data, function ($message) {
-            $message->to('hello@popcornquest.fun')
-                    ->subject('Nouveau message');
-        });
-        
 
-        return redirect()->back()->with('success', 'Thank you for your message, we will get back to you soon!');
+        Mail::send('contact.email', $data, function ($message) use ($email) {
+            $message->to($email)
+                    ->subject('Contact Form Submission');
+        });
+
+        return back()->with('success', 'Ton message a bien été envoyé !');
     }
 }

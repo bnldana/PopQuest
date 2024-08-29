@@ -19,7 +19,7 @@
                 <a href="{{ app()->getLocale() == 'en' ? route('levels.show.en', $level->id) : route('levels.show', $level->id) }}" class="level-link">
                 <div class="level-container" data-aos="{{ $animationDirection }}" data-aos-delay="{{ $delay }}">
                         <div class="level-card">
-                            <h3>{{ $level->id }}</h3>
+                            {!! app()->getLocale() == 'en' ? $level->svg_en : $level->svg !!}
                             @if($scoreValue !== null)
                                 <p>{{ $scoreValue }} pts</p>
                             @endif
@@ -28,9 +28,19 @@
                     </div>
                 </a>
             @endforeach
+            
         @else
             <p>Aucun niveau trouvé.</p>
         @endif
+    </div>
+    @php
+        $randomLevelId = rand(1, 8);
+    @endphp
+
+    <div class="random-level">
+        <a href="{{ app()->getLocale() == 'en' ? route('levels.show.en', ['level' => $randomLevelId]) : route('levels.show', ['level' => $randomLevelId]) }}" class="playDiv">
+            <i class="fas fa-random"></i>
+        </a>
     </div>
 @endif
 

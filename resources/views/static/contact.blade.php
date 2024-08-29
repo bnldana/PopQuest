@@ -1,5 +1,7 @@
 @extends('layouts.static')
 
+@section("body-id", "contact")
+
 @section('title', 'contact')
 
 @section('pageContent')

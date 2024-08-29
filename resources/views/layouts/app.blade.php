@@ -45,8 +45,8 @@
         <li class="nav-item">
             <a class="nav-link" href="{{ app()->getLocale() == 'en' ? '/en/contact' : '/contact' }}">{{ __('messages.Contact') }}</a>
         </li>
-        <li class="nav-item playDiv">
-            <a class="nav-link" href="#" id="playButton" style="color: var(--pop-white) !important;">
+        <li class="nav-item play-button playDiv">
+            <a class="nav-link play-button" href="#" style="color: var(--pop-white) !important;">
                 <i class="fa-solid fa-gamepad"></i> {{ __('messages.JOUER !') }}
             </a>
         </li>
@@ -69,6 +69,7 @@
     </nav>
 </header>
 
+<div class="progressBar" style="width: 0%;"></div>
     <main>
         @yield('content')
     </main>
@@ -92,6 +93,22 @@
                         </div>
                         <button type="submit" class="default">Go !</button>
                     </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="popModal" tabindex="-1" aria-labelledby="popModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="popModalLabel">Merci !</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                   <p>Ce projet est un projet open-source disponible sur <a href="https://github.com/bnldana/PopQuest">GitHub</a>.</p>
+                    <p>Il n'aurait pas été possible sans le soutien de d'Emilie, Emma, Yolen, Morgane, et bien d'autres que j'oublie de citer car je suis ingrate.</p>
+                    <p>Un grand merci également à M. Winstein qui m'a toujours poussée à me dépasser lors des séances de soutien</p>
                 </div>
             </div>
         </div>
@@ -122,30 +139,114 @@
     <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
     <script>
 $(document).ready(function() {
+    let typedSequence = '';
+    const targetSequence = 'pop';
+
+    const leaderboardContent = document.getElementById('leaderboard-content');
+    const navLinks = document.querySelectorAll('.leaderboard-navbar a');
+
+    const progressBar = document.querySelector('.progressBar');
+    const loadingSpinner = document.getElementById('loading-spinner'); // Spinner element
+
+    const pseudo = getCookie('pseudo');
+
+    function applyGrowEffect() {
+        const leaderboardItems = document.querySelectorAll(".leaderboard-item");
+
+        leaderboardItems.forEach((item, index) => {
+            if (index < 3) {
+                setTimeout(() => {
+                    item.classList.add("grow");
+                }, index * 150);
+            }
+        });
+    }
+
+    navLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            navLinks.forEach(link => link.classList.remove('active'));
+            this.classList.add('active');
+
+            const levelId = this.getAttribute('data-level');
+
+            loadingSpinner.style.display = 'block';
+
+            fetch(`/leaderboard/data/${levelId}`)
+                .then(response => response.json())
+                .then(data => {
+                    leaderboardContent.innerHTML = data.html;
+                    applyGrowEffect();
+                })
+                .catch(error => console.error('Erreur:', error))
+                .finally(() => {
+                    loadingSpinner.style.display = 'none';
+                });
+        });
+    });
+
+    applyGrowEffect();
+
     AOS.init();
 
-    $('#playButton').on('click', function(event) {
-    event.preventDefault();
-    const pseudo = getCookie('pseudo');
-    const targetRoute = '{{ app()->getLocale() == "en" ? url("/en/levels") : url("/levels") }}';
+    $('.play-button').on('click', function(event) {
+        event.preventDefault();
+        const pseudo = getCookie('pseudo');
+        const targetRoute = '{{ app()->getLocale() == "en" ? url("/en/levels") : url("/levels") }}';
 
-    if (pseudo) {
-        window.location.href = targetRoute;
-    } else {
-        $('#pseudoModal').modal('show');
+        if (pseudo) {
+            window.location.href = targetRoute;
+        } else {
+            $('#pseudoModal').modal('show');
+        }
+    });
+
+    $('#pseudoForm').on('submit', function(event) {
+        event.preventDefault();
+        let pseudo = $('#pseudo').val();
+        const targetRoute = '{{ app()->getLocale() == "en" ? url("/en/levels") : url("/levels") }}';
+
+        if (pseudo) {
+            document.cookie = `pseudo=${pseudo}; path=/; max-age=31536000; SameSite=Lax`;
+            window.location.href = targetRoute;
+        }
+    });
+
+    document.addEventListener('keydown', function(event) {
+        typedSequence += event.key.toLowerCase();
+
+        if (typedSequence.includes(targetSequence)) {
+            const popModal = new bootstrap.Modal(document.getElementById('popModal'));
+            popModal.show();
+
+            typedSequence = '';
+        } else if (typedSequence.length > targetSequence.length) {
+            typedSequence = typedSequence.slice(-targetSequence.length);
+        }
+    });
+
+    function fillprogressBar (){
+        const windowHeight = window.innerHeight;
+        const fullHeight = document.body.clientHeight;
+        const scrolled = window.scrollY;
+        const percentScrolled = (scrolled / (fullHeight - windowHeight)) * 100;
+
+        progressBar.style.width = percentScrolled + '%';
+    };
+
+    window.addEventListener('scroll', fillprogressBar);
+
+    function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) {
+            return parts.pop().split(';').shift();
+        }
+        return null;
     }
-});
 
-$('#pseudoForm').on('submit', function(event) {
-    event.preventDefault();
-    let pseudo = $('#pseudo').val();
-    const targetRoute = '{{ app()->getLocale() == "en" ? url("/en/levels") : url("/levels") }}';
-
-    if (pseudo) {
-        document.cookie = `pseudo=${pseudo}; path=/; max-age=31536000; SameSite=Lax`;
-        window.location.href = targetRoute;
-    }
-});
+    console.log('Vérification du cookie pseudo:', pseudo);
 });
     </script>
     <script src="{{ asset('js/script.js') }}"></script>

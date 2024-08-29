@@ -6,6 +6,10 @@ return [
     'Contact' => 'Contact',
     'JOUER !' => 'JOUER !',
     
+    'Global' => 'Global',
+    'Niveau' => 'Niveau',
+    'Nv' => 'Nv',
+
     'La quête du popcorn' => 'La quête du popcorn',
     'Bienvenue dans Popcorn Quest, le jeu pour tous les fans de cinéma !' => 'Bienvenue dans Popcorn Quest, le jeu pour tous les fans de cinéma !',
     'Teste tes connaissances avec huit mini-quiz sur différents thèmes du ciné. Fais le meilleur score et deviens le roi du grand écran.' => 'Teste tes connaissances avec huit mini-quiz sur différents thèmes du ciné. Fais le meilleur score et deviens le roi du grand écran.',
@@ -14,6 +18,11 @@ return [
     'Le classement' => 'Le classement',
     'Voir le classement entier' => 'Voir le classement entier',
     'Fais mieux !' => 'Fais mieux !',
+    'L\'histoire du jeu' => 'L\'histoire du jeu',
+    'Qui se cache derrière Popcorn Quest ? Dana, une étudiante en <a href="https://mastercaweb.unistra.fr/">master CAWEB</a>.' => 'Qui se cache derrière Popcorn Quest ? Dana, une étudiante en <a href="https://mastercaweb.unistra.fr/">master CAWEB</a>.',
+    "Tout part d'une envie de... m'amuser avec mon projet de fin d'études !" => "Tout part d'une envie de... m'amuser avec mon projet de fin d'études !",
+    "J'ai donc fusionné deux de mes centres d'intérêt : le cinéma et le développement, pour donner naissance à Popcorn Quest !" => "J'ai donc fusionné deux de mes centres d'intérêt : le cinéma et le développement, pour donner naissance à Popcorn Quest !",
+    "J'espère que vous aimerez jouer à mon jeu autant que j'ai aimé le créer !" => "J'espère que vous aimerez jouer à mon jeu autant que j'ai aimé le créer ! :)",
     'F.A.Q' => 'F.A.Q',
     'Faut-il créer un compte pour jouer ?' => 'Faut-il créer un compte pour jouer ?',
     "Non, pas besoin. Clique sur Jouer, entre ton pseudo et c'est parti !" => "Non, pas besoin. Clique sur Jouer, entre ton pseudo et c'est parti !",

@@ -33,9 +33,11 @@ class GameController extends Controller
     {
         $level = Level::with('questions')->findOrFail($id);
     
+        $level->translated_name = Lang::get('levels.' . $level->id);
+        $level->translated_explanation = Lang::get('levels.' . $level->id . '_explanation');
+    
         foreach ($level->questions as $question) {
             $question->text = Lang::get('questions.' . $question->id);
-            
             $question->option_a = Lang::get('questions.' . $question->id . '_option_a');
             $question->option_b = Lang::get('questions.' . $question->id . '_option_b');
             $question->option_c = Lang::get('questions.' . $question->id . '_option_c');
@@ -46,7 +48,7 @@ class GameController extends Controller
             'level' => $level,
             'isLevel2' => $id == 2
         ]);
-    }    
+    }       
 
     public function fetchQuestion(Level $level, Question $question)
     {
@@ -92,10 +94,13 @@ class GameController extends Controller
             'isCorrect' => $isCorrect
         ]);
     
-        return response()->json(['correct' => $isCorrect]);
+        return response()->json([
+            'correct' => $isCorrect,
+            'correctAnswerFr' => $questionFr,
+            'correctAnswerEn' => $questionEn
+        ]);
     }
     
-
     public function getEmojiData()
     {
         $questions = Emoji::where('level', 2)

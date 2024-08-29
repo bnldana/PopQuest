@@ -23,6 +23,8 @@ Route::group(['prefix' => 'en', 'middleware' => 'setlocale:en'], function () {
 });
 
 Route::get('/leaderboard', [LeaderboardController::class, 'showLeaderboardPage'])->name('leaderboard');
+Route::get('/leaderboard/data/{level?}', [LeaderboardController::class, 'getLeaderboard'])->name('leaderboard.data');
+
 Route::get('/levels', [GameController::class, 'index'])->name('levels.index');
 Route::get('/levels/{level}', [GameController::class, 'showLevel'])->name('levels.show');
 
@@ -45,19 +47,16 @@ Route::post('/levels/2/check-answer', [GameController::class, 'checkLevel2Answer
 
 Route::post('/scores/{level}', [ScoreController::class, 'store'])->name('scores.store');
 
-Route::post('/send', [ContactController::class, 'send'])->name('send');
+Route::post('/contact', [ContactController::class, 'send'])->name('contact.send');
 
-// Fallback route for 404
 Route::fallback(function () {
     return response()->view('errors.404', [], 404);
 });
 
-// Admin routes
 Route::group(['prefix' => 'admin'], function () {
     Voyager::routes();
 });
 
-// Language switching route
 Route::get('/set-locale/{locale}', function ($locale) {
     if (!in_array($locale, ['en', 'fr'])) {
         abort(400);

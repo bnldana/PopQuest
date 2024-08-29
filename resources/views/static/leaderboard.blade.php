@@ -2,25 +2,34 @@
 
 @section('title', 'leaderboard')
 
+@section("body-id", "leaderboard")
+
 @section('pageContent')
 <h1 class="mb-4">{{ __('messages.Le classement') }}</h1>
-<div class="leaderboard-list mb-4">
-        <ul>
-            @foreach ($results as $index => $row)
-                <li class='leaderboard-item'>
-                    @if ($index == 0)
-                        <i class="fa-solid fa-crown"></i>
-                    @endif
-                    <div class='user-ldb'>
-                        <span class='rank'>{{ $index + 1 }}</span>
-                        <span class='username'>{{ $row->pseudo }}</span>
-                    </div>
-                    <span class='score'>{{ $row->total_score }}</span>
-                </li>
-            @endforeach
-        </ul>
-        <div class="button-container">
-                    <button id="playButton" class="default">{{ __('messages.Fais mieux !') }}</button>
-                </div>
+
+<nav class="leaderboard-navbar">
+    <ul>
+        <li><a href="#" data-level="global" class="active">{{ __('messages.Global') }}</a></li>
+        @foreach ($levels as $level)
+        <li>
+            <a href="#" data-level="{{ $level->level }}">
+                <span class="full-label">{{ __('messages.Niveau') }} {{ $level->level }}</span>
+                <span class="short-label">{{ __('messages.Nv') }} {{ $level->level }}</span>
+            </a>
+        </li>
+        @endforeach
+    </ul>
+</nav>
+
+<div id="leaderboard-content" class="leaderboard-list mb-4">
+<div id="loading-spinner" style="display: none;">
+    <div class="spinner"></div>
 </div>
+    @include('partials.leaderboard_list', ['results' => $results])
+</div>
+
+<div class="button-container">
+    <button id="playButton" class="play-button default">{{ __('messages.Fais mieux !') }}</button>
+</div>
+
 @endsection

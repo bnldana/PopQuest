@@ -45,7 +45,7 @@
                     <a class="nav-link" href="#contact">{{ __('messages.Contact') }}</a>
                 </li>
                 <li class="nav-item playDiv">
-                    <a class="nav-link" href="#" id="playButton" style="color: var(--pop-white) !important;">
+                    <a class="nav-link play-button" style="color: var(--pop-white) !important;">
                         <i class="fa-solid fa-gamepad"></i> {{ __('messages.JOUER !') }}
                     </a>
                 </li>
@@ -91,8 +91,8 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{ app()->getLocale() == 'en' ? '/en/contact' : '/contact' }}">{{ __('messages.Contact') }}</a>
                 </li>
-                <li class="nav-item playDiv">
-                    <a class="nav-link" href="#" id="playButton" style="color: var(--pop-white) !important;">
+                <li class="nav-item play-button playDiv">
+                    <a class="nav-link play-button" href="#" style="color: var(--pop-white) !important;">
                         <i class="fa-solid fa-gamepad"></i> {{ __('messages.JOUER !') }}
                     </a>
                 </li>
@@ -178,13 +178,23 @@
 
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
-    <script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.1/dist/aos.js"></script>
+<script>
 $(document).ready(function() {
     AOS.init();
 
-    $('#playButton').on('click', function(event) {
+    const leaderboardItems = document.querySelectorAll(".leaderboard-item");
+
+    leaderboardItems.forEach((item, index) => {
+    if (index < 3) {
+        setTimeout(() => {
+            item.classList.add("grow");
+        }, index * 150);
+    }
+});
+
+    $('.play-button').on('click', function(event) {
     event.preventDefault();
     const pseudo = getCookie('pseudo');
     const targetRoute = '{{ app()->getLocale() == "en" ? url("/en/levels") : url("/levels") }}';
@@ -196,6 +206,19 @@ $(document).ready(function() {
     }
 });
 
+const progressBar = document.querySelector('.progressBar');
+
+function fillprogressBar (){
+  const windowHeight = window.innerHeight;
+  const fullHeight = document.body.clientHeight;
+  const scrolled = window.scrollY;
+  const percentScrolled = (scrolled / (fullHeight - windowHeight)) * 100;
+
+  progressBar.style.width = percentScrolled + '%';
+};
+
+window.addEventListener('scroll', fillprogressBar);
+
 $('#pseudoForm').on('submit', function(event) {
     event.preventDefault();
     let pseudo = $('#pseudo').val();
@@ -206,8 +229,37 @@ $('#pseudoForm').on('submit', function(event) {
         window.location.href = targetRoute;
     }
 });
+
+let typedSequence = '';
+const targetSequence = 'pop';
+
+document.addEventListener('keydown', function(event) {
+    typedSequence += event.key.toLowerCase();
+
+    if (typedSequence.includes(targetSequence)) {
+        const popModal = new bootstrap.Modal(document.getElementById('popModal'));
+        popModal.show();
+
+        typedSequence = '';
+    } else if (typedSequence.length > targetSequence.length) {
+        typedSequence = typedSequence.slice(-targetSequence.length);
+    }
 });
-    </script>
-    <script src="{{ asset('js/script.js') }}"></script>
+
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+    }
+    return null;
+}
+
+const pseudo = getCookie('pseudo');
+console.log('Vérification du cookie pseudo:', pseudo);
+
+});
+</script>
+<script src="{{ asset('js/script.js') }}"></script>
 
 </html>

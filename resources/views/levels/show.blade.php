@@ -6,8 +6,8 @@
 <div class='question-wrapper'>
     <div class='question-container'>
         <div class='level-info'>
-            <h1 id='level-name'>{{ $level->name }}</h1>
-            <p id='level-explanation'>{{ $level->explanation }}</p>
+        <h1 id='level-name'>{{ $level->translated_name }}</h1>
+        <p id='level-explanation'>{{ $level->translated_explanation }}</p>
             <button id='startLevel' class='default'>{{ __('messages.C\'est parti !') }}</button>
             <div class="navigation-options" id="nav-quiz">
                 <a href="{{ app()->getLocale() == 'en' ? '/en/levels' : '/levels' }}" class="map-link">
@@ -16,7 +16,7 @@
             </div>
         </div>
         <div class='level-content' style="display:none;">
-            <p id='level-title'>{{ $level->name }}</p>
+            <p id='level-title'>{{ $level->translated_name }}</p>
             <div class='question-header'>
                 <div class='kernels'>
                     @for ($i = 1; $i <= 8; $i++)
@@ -38,12 +38,12 @@
                                 <input type='text' id='movie-input' placeholder='Tape un titre...' autocomplete='off' />
                                 <div id='suggestions' class="suggestions-list"></div>
                             </div>
-                            <button id='submitAnswer' class='default'>Valider</button>
                         </div>
                     </div>
                 @else
                     <h3 id='question'></h3>
-                    <ul id='options'></ul>
+                    <ul id='options'>
+                    </ul>
                     <p id='score-display'></p>
                 @endif
             </div>
@@ -117,16 +117,43 @@
         }
 
         function displayStandardQuestion(question) {
-            $('#question').text(question.text);  // Updated to use 'text' for translated question
+            $('#question').text(question.text);
             let optionsHtml = question.choices.map(choice => `<li style="${choice.choice_text.trim() === '' ? 'display: none;' : ''}">${choice.choice_text}</li>`).join('');
 
             $('#options').html(optionsHtml);
             $('#options li').on('click', function() {
-                if($(this).css('display') !== 'none') {
-                    let choiceIndex = $('#options li').index(this);
-                    validateAnswer(question.id, choiceIndex, question.correct_answer);
-                }
-            });
+            if ($(this).css('display') !== 'none') {
+            let choiceIndex = $('#options li').index(this);
+            let selectedText = $(this).text();
+        
+        validateAnswer(question.id, choiceIndex, question.correct_answer);
+
+        $.ajax({
+            url: `/levels/{{ $level->id }}/questions/${question.id}/verify`,
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            },
+            data: {
+                selectedOption: selectedText
+            },
+            success: function(response) {
+                $('#options li').each(function() {
+                    let liText = $(this).text();
+
+                    if (liText === response.correctAnswerFr || liText === response.correctAnswerEn) {
+                        $(this).addClass('correct');
+                    } else {
+                        $(this).removeClass('correct');
+                    }
+                });
+            },
+            error: function(xhr, status, error) {
+                console.error('Erreur lors de la vérification de la réponse:', error);
+            }
+        });
+    }
+});
             updateQuestionCounter(currentQuestionIndex + 1, questions.length);
         }
 
@@ -163,10 +190,9 @@
         }
 
         function displayEmojiQuestion(question) {
-            $('#emojisQuestion').text(question.text);  // Updated to use 'text' for translated question
+            $('#emojisQuestion').text(question.question);
             correctAnswerId = question.answer_id;
 
-            $('#movie-input').val('').css('border', '');
             $('.kernel').removeClass('current');
             $('#qst-' + (currentQuestionIndex + 1)).addClass('current');
 
@@ -185,8 +211,11 @@
             console.log("Processing standard response. Is correct?", isCorrect);
 
             $('#options li').each(function() {
-                $(this).removeClass('correct incorrect unselected')
-                    .addClass($(this).text() === correctAnswer ? 'correct' : 'unselected');
+            if ($(this).hasClass('correct')) {
+            $(this).removeClass('incorrect unselected');
+            } else {
+                $(this).removeClass('incorrect unselected')
+                }
             });
 
             let selectedLi = $('#options li').eq(choiceIndex);
@@ -207,31 +236,32 @@
                 } else {
                     endLevel();
                 }
-            }, 2500);
+            }, 2000);
         }
 
         function processEmojiResponse(isCorrect) {
             if (isCorrect) {
-                $('#movie-input').css('border', '2px solid green');
+                $('#movie-input').removeClass('incorrect').addClass('correct');
                 $('#qst-' + (currentQuestionIndex + 1)).addClass('right');
                 
                 score += calculatePoints(new Date() - startTime);
             } else {
-                $('#movie-input').css('border', '2px solid red');
+                $('#movie-input').removeClass('correct').addClass('incorrect');
                 $('#qst-' + (currentQuestionIndex + 1)).addClass('wrong');
                 
                 score += 0; 
             }
 
             setTimeout(function() {
-                $('#movie-input').css('border', '');
+                $('#movie-input').val('').removeClass('correct incorrect');
+                $('#suggestions').empty().hide();
                 currentQuestionIndex++;
                 if (currentQuestionIndex < questions.length) {
                     displayQuestion(questions[currentQuestionIndex]);
                 } else {
                     endLevel();
                 }
-            }, 2500);
+            }, 2000);
         }
 
         function loadEmojiQuestions() {
@@ -260,9 +290,12 @@
         $('#movie-input').on('input', function() {
             var userInput = $(this).val();
             if(userInput.length < 3) {
-                $('#suggestions').empty();
+                $('#suggestions').empty().hide();
                 return;
             }
+
+            $('#suggestions').show(); 
+
             $.ajax({
                 url: '{{ route("tmdb.api") }}',
                 type: 'POST',
@@ -283,6 +316,27 @@
                             $('#movie-input').val(movie.title);
                             $('#movie-input').data('movieId', movie.id);
                             $('#suggestions').empty();
+                            
+                            var movieId = movie.id;
+                            if (!movieId) {
+                                alert('Choisis un film !');
+                                return;
+                            }
+                            $.ajax({
+                                url: '{{ route("level2.check") }}',
+                                type: 'POST',
+                                contentType: 'application/json',
+                                data: JSON.stringify({ movieId: movieId }),
+                                headers: {
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                success: function(data) {
+                                    processEmojiResponse(data.correct);
+                                },
+                                error: function(xhr, status, error) {
+                                    console.error('Error submitting emoji answer:', error);
+                                }
+                            });
                         });
 
                         $('#suggestions').append(movieSuggestion);
@@ -290,29 +344,6 @@
                 },
                 error: function(xhr, status, error) {
                     console.error('Error fetching movie suggestions:', error);
-                }
-            });
-        });
-
-        $('#submitAnswer').on('click', function() {
-            var movieId = $('#movie-input').data('movieId');
-            if (!movieId) {
-                alert('Choisis un film !');
-                return;
-            }
-            $.ajax({
-                url: '{{ route("level2.check") }}',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ movieId: movieId }),
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                success: function(data) {
-                    processEmojiResponse(data.correct);
-                },
-                error: function(xhr, status, error) {
-                    console.error('Error submitting emoji answer:', error);
                 }
             });
         });
@@ -359,26 +390,33 @@
                 }
                 
                 $('.question-container').html(`
+                    <p id='level-title'>{{ $level->translated_name }}</p>
                     <h3>${message}</h3>
-                    <button class="default"><a href="${nextLevelUrl}">Passer au niveau ${nextLevel}</a></button>
                     <div class="navigation-options">
-                        <a href="${previousLevelUrl}" class="previous-link">
-                            <i class="fas fa-arrow-left"></i>
-                        </a>
-                        
+                        @if ($level->id != 1)
+                            <a href="${previousLevelUrl}" class="previous-link">
+                                <i class="fas fa-arrow-left"></i>
+                            </a>
+                        @endif
+
                         <a href="{{ app()->getLocale() == 'en' ? '/en/levels' : '/levels' }}" class="map-link">
                             <i class="fas fa-home"></i>
                         </a>
-                        
+
                         <a href="#" class="retry-link" onclick="window.location.reload();">
                             <i class="fas fa-redo-alt"></i>
                         </a>
+
+                        @if ($level->id != 8)
+                            <a href="${nextLevelUrl}" class="next-link">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        @endif
                     </div>
                 `);
             })
             .catch(error => console.error('Error sending score:', error));
         }
-
     });
 </script>
 

@@ -13,8 +13,8 @@
                     <p>{{ __('messages.Teste tes connaissances avec huit mini-quiz sur différents thèmes du ciné. Fais le meilleur score et deviens le roi du grand écran.') }}</p>
                     <p>{{ __('messages.Alors, prêt à relever le défi ?') }}</p>
                 </div>
-            <div class="button-container mt-3">
-                <button id="playButton2" class="default">{{ __("messages.C'est parti !") }}</button>
+            <div class="button-container">
+                <button class="play-button default">{{ __("messages.C'est parti !") }}</button>
             </div>
         </div>
         <div class="col-md-7 image-container">
@@ -46,11 +46,28 @@
 </a>
         <div class="buttons-container">
                 <div class="button-container">
-                    <button id="playButton" class="default">{{ __('messages.Fais mieux !') }}</button>
+                    <button class="play-button default">{{ __('messages.Fais mieux !') }}</button>
                 </div>
             </div>
     </div>
 </div>
+
+<div id="story" class="row align-items-center mb-5" data-aos="fade-up" data-aos-offset="200" data-aos-duration="1000">
+        <div class="col-md-7 image-container-2">
+            <div class="bg-image-2">
+                <div class="gradient-overlay"></div>
+            </div>
+        </div>
+        <div class="col-md-5 text-content">
+            <h1>{{ __('messages.L\'histoire du jeu') }}</h1>
+                <div class="wrapper">
+                <p>{!! __('messages.Qui se cache derrière Popcorn Quest ? Dana, une étudiante en <a href="https://mastercaweb.unistra.fr/">master CAWEB</a>.') !!}</p>
+                <p>{{ __('messages.Tout part d\'une envie de... m\'amuser avec mon projet de fin d\'études !') }}</p>
+                <p>{{ __('messages.J\'ai donc fusionné deux de mes centres d\'intérêt : le cinéma et le développement, pour donner naissance à Popcorn Quest !') }}</p>
+                <p>{{ __('messages.J\'espère que vous aimerez jouer à mon jeu autant que j\'ai aimé le créer !') }}</p>
+                </div>
+        </div>
+    </div>
 
     <div id="faq" class="mb-5">
         <h1 class="mb-4" data-aos="fade-up" data-aos-offset="200" data-aos-duration="1000">{{ __('F.A.Q') }}</h1>
